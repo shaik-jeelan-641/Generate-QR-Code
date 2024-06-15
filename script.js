@@ -7,7 +7,6 @@ const BGColor = document.getElementById("Color1");
 const FGColor = document.getElementById("color2");
 
 // Variables
-let QR_Code;
 let sizeChoice = 100;
 let BGColorChoice = "#000000";
 let FGColorChoice = "#ffffff";
@@ -45,24 +44,9 @@ const generateQRCode = async () => {
   // Clear container
   container.innerHTML = "";
 
-  // Create a canvas element
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-
-  // Calculate the new size (10% larger)
-  const newSize = sizeChoice * 1.10;
-
-  // Set canvas dimensions
-  canvas.width = newSize;
-  canvas.height = newSize;
-
-  // Draw white background
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, newSize, newSize);
-
-  // Generate QR code
-  const qrCanvas = document.createElement("canvas");
-  new QRCode(qrCanvas, {
+  // Generate QR code on a temporary canvas
+  const tempContainer = document.createElement("div");
+  const QR_Code = await new QRCode(tempContainer, {
     text: userInput.value,
     width: sizeChoice,
     height: sizeChoice,
@@ -70,58 +54,43 @@ const generateQRCode = async () => {
     colorLight: BGColorChoice,
   });
 
-  // Wait for QR code to be drawn
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  // Wait for QR code to render
+  setTimeout(() => {
+    const qrCanvas = tempContainer.querySelector("canvas");
+    const qrSize = qrCanvas.width;
+    const finalSize = qrSize * 1.2; // Increase size by 20%
+    const offset = (finalSize - qrSize) / 2;
 
-  // Draw QR code onto the main canvas
-  const qrImage = qrCanvas.querySelector("img");
-  if (qrImage) {
-    qrImage.onload = () => {
-      ctx.drawImage(qrImage, (newSize - sizeChoice) / 2, (newSize - sizeChoice) / 2, sizeChoice, sizeChoice);
+    // Create final canvas with white background
+    const finalCanvas = document.createElement("canvas");
+    finalCanvas.width = finalSize;
+    finalCanvas.height = finalSize;
+    const ctx = finalCanvas.getContext("2d");
 
-      // Append canvas to container
-      container.appendChild(canvas);
+    // Fill with white background
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, finalSize, finalSize);
 
-      // Set url for download
-      const src = canvas.toDataURL("image/png");
-      downloadBtn.href = src;
+    // Draw QR code onto the white canvas
+    ctx.drawImage(qrCanvas, offset, offset);
 
-      // Set download button properties
-      let userValue = userInput.value;
-      try {
-        userValue = new URL(userValue).hostname;
-      } catch (_) {
-        userValue = inputFormatter(userValue);
-      }
-      downloadBtn.download = `${userValue}QR.png`;
-      downloadBtn.classList.remove("hide");
-    };
-  } else {
-    // Fallback for browsers that do not support canvas image generation
-    const qrImageData = qrCanvas.toDataURL("image/png");
-    const imgElement = document.createElement("img");
-    imgElement.src = qrImageData;
-    imgElement.onload = () => {
-      ctx.drawImage(imgElement, (newSize - sizeChoice) / 2, (newSize - sizeChoice) / 2, sizeChoice, sizeChoice);
+    // Append final canvas to container
+    container.appendChild(finalCanvas);
 
-      // Append canvas to container
-      container.appendChild(canvas);
+    // Set url for download
+    const src = finalCanvas.toDataURL("image/png");
+    downloadBtn.href = src;
 
-      // Set url for download
-      const src = canvas.toDataURL("image/png");
-      downloadBtn.href = src;
-
-      // Set download button properties
-      let userValue = userInput.value;
-      try {
-        userValue = new URL(userValue).hostname;
-      } catch (_) {
-        userValue = inputFormatter(userValue);
-      }
-      downloadBtn.download = `${userValue}QR.png`;
-      downloadBtn.classList.remove("hide");
-    };
-  }
+    // Set download button properties
+    let userValue = userInput.value;
+    try {
+      userValue = new URL(userValue).hostname;
+    } catch (_) {
+      userValue = inputFormatter(userValue);
+    }
+    downloadBtn.download = `${userValue}QR`;
+    downloadBtn.classList.remove("hide");
+  }, 100);
 };
 
 // Initialize page
