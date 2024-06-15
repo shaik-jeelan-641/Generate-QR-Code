@@ -58,7 +58,7 @@ const generateQRCode = async () => {
   setTimeout(() => {
     const qrCanvas = tempContainer.querySelector("canvas");
     const qrSize = qrCanvas.width;
-    const finalSize = qrSize * 1.05; // Increase size by 20%
+    const finalSize = qrSize * 1.1; // Increase size by 20%
     const offset = (finalSize - qrSize) / 2;
 
     // Create final canvas with white background
