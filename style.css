@@ -140,7 +140,7 @@ select option {
   text-decoration: none;
   text-transform: uppercase;
   border: 0.18em solid var(--bcg-color);
-  padding-left: 35%;
+  text-align:center;
 }
 .container {
   display: flex;
