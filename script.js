@@ -7,7 +7,7 @@ const BGColor = document.getElementById("Color1");
 const FGColor = document.getElementById("color2");
 
 // Variables
-let sizeChoice = 100;
+let sizeChoice = 200;
 let BGColorChoice = "#ffffff";
 let FGColorChoice = "#000000";
 
