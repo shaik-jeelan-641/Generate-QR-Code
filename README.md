@@ -1,4 +1,4 @@
-# We can Generate a uniqe QR Code by entering name and Url
+## We can Generate a uniqe QR Code by entering name and Url
 
 Users can text in input text area, and upon clicking a button, a corresponding QR code is generated and displayed below.
 The interface is clean and intuitive, providing a straightforward way to create QR codes for various purposes
